@@ -53,10 +53,11 @@ class VimeoUpload extends React.Component {
     })
   }
 
-  onProgress = () => {
-    console.log(arguments)
+  onProgress = progressEvent => {
+    console.log(progressEvent)
   }
 
+  // Appelé quand un morceau a été envoyé
   onContentUploadSuccess = sentChunkSize => () => {
     console.log("Upload du morceau terminé avec succès, nombre d'octets envoyés:", sentChunkSize)
     const alreadySent = this.state.bytesSent
@@ -67,9 +68,16 @@ class VimeoUpload extends React.Component {
       }
     })
 
+    // Compare le nombre d'octets envoyés jusqu'à maintenant, avec la taille
+    // en octets du fichier
+    // Si on n'a pas terminé (nb octets envoyés < taille fichier), on relance
+    // en prenant comme offset de départ le nombre d'octets envoyés
     if(alreadySent < this.state.file.size) {
       console.log("envoie la suite à partir de l'offset", alreadySent)
       this.uploadPart(alreadySent)
+    }
+    else {
+      alert("Terminé !")
     }
 
   }
@@ -83,29 +91,45 @@ class VimeoUpload extends React.Component {
   uploadPart = offset => {
     // Taille d'un morceau: 512 Ko
     const { file } = this.state
+    // Si le dernier morceau est inférieur en taille à 512 Ko,
+    // l'offset de fin ne pourra pas dépasser la taille du fichier
     const end = Math.min(offset + CHUNK_SIZE, file.size)
 
+    // Découpe une tranche de 512 Ko (ou moins si c'est le dernier morceau)
+    // à partir de l'offset de départ
     const content = file.slice(offset, end)
+    // Calcule la longueur effective du morceau
     const contentLength = end - offset
+    console.log('Taille du morceau (chunk) à envoyer:', contentLength)
 
     // XMLHttpRequest est l'ancêtre de fetch pour faire des requêtes AJAX
-
     // On crée l'objet
     var xhr = new XMLHttpRequest()
 
     // Méthode PATCH et on met l'URL d'upload renvoyée par Vimeo après l'initialisation
     xhr.open('PATCH', this.state.uploadLink, true)
-    // Headers requis
+    // Headers requis. Voir la doc:
     // https://developer.vimeo.com/api/upload/videos#step-2-upload-the-video-file
     xhr.setRequestHeader('Tus-Resumable', '1.0.0')
     xhr.setRequestHeader('Content-Type', 'application/offset+octet-stream')
+    // xhr.setRequestHeader('Content-Length', contentLength)
+    // Indique à Vimeo l'offset de départ
     xhr.setRequestHeader('Upload-Offset', offset)
 
-    if (xhr.upload) {
-      xhr.upload.addEventListener('progress', this.onProgress)
-    }
+    // Chaque morceau de 512Ko peut être découpé en plus petits bouts
+    // this.onProgress est appelée à chaque fois qu'on a fini un morceau
+    // C'est probablement beaucoup d'efforts pour une amélioration minime
+    // de s'en servir
+    // if (xhr.upload) {
+    //   xhr.upload.addEventListener('progress', this.onProgress)
+    // }
+    // this.onContentUploadSuccess est appelée quand on a fini
+    // un morceau de 512 Ko
     xhr.onload = this.onContentUploadSuccess(contentLength)
+    // Appelée si une erreur se produit
     xhr.onerror = this.onContentUploadError
+
+    // Déclenche réellement le transfert
     xhr.send(content)
   }
 
