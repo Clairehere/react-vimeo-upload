@@ -8,12 +8,12 @@ class App extends Component {
     accessToken: ''
   }
   setAccessToken = accessToken => this.setState({ accessToken })
-  componentDidMount() {
-    const vimeoTokensRef = firebase.database().ref('tokens')
-    vimeoTokensRef.on('child_added', snapshot => {
 
-    })
-  }
+  // componentDidMount() {
+  //   const vimeoTokensRef = firebase.database().ref('tokens')
+  //   vimeoTokensRef.on('child_added', snapshot => {
+  //   })
+  // }
   render() {
     // Récupère le access token pour le compte Vimeo
     // En-dessous, si on n'a pas d'access token, on affiche

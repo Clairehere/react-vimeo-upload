@@ -24,6 +24,7 @@ class VimeoAuthorization extends React.Component {
         hashParams[key] = val
       }
     }
+    console.log(hashParams)
     this.props.setAccessToken(hashParams.access_token)
   }
   handleClick = () => {
@@ -32,8 +33,11 @@ class VimeoAuthorization extends React.Component {
       response_type: 'token',
       scope: 'public private upload video_files',
       redirect_uri: appUrl,
-      state: 'TestString1234'
+      // state: 'TestString1234'
     }
+    // Je veux convertir cet objet en une "query string"
+    // client_id=XXX&response_type=token&scope=public%20private%20upload%20video_files&redirect_uri=http....
+
     // La query string est ce qu'on ajoute derrière le ? dans l'URL
     const queryStringSegments = []
     // Parcourir toutes les CLES de params
@@ -44,9 +48,12 @@ class VimeoAuthorization extends React.Component {
       // On pousse dans le tableau
       queryStringSegments.push(segment)
     }
+    // console.log(queryStringSegments)
     // On lie tous les "segments" avec le caractère &
     const queryString = queryStringSegments.join('&')
+    // console.log(queryString)
     const url = vimeo.authorizationUrl + '?' + queryString
+    // console.log(url)
     window.location.href = url
   }
 	render() {
