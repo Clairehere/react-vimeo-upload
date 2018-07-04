@@ -2,7 +2,7 @@
 
 # ajouté par Benoît
 # ne pas sauvegarder le access token dans Git
-/src/config.js
+/src/config.json
 
 # dependencies
 /node_modules

@@ -1,6 +1,4 @@
 import React from 'react'
-// Le "access token", qui permet de s'authentifier auprès de l'API Vimeo
-import { accessToken } from './config'
 
 // Taille des morceaux de vidéo qu'on envoie
 const CHUNK_SIZE = 512 * 1024
@@ -38,7 +36,7 @@ class VimeoUpload extends React.Component {
         // Ce qu'on accepte comme type de données en retour de notre requête
         Accept: 'application/vnd.vimeo.*+json;version=3.4',
         // Passage du token d'authentification
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${this.props.accessToken}`,
         // Indique à Vimeo qu'on lui envoie du JSON
         'Content-Type': 'application/json'
       },

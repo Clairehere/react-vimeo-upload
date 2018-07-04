@@ -1,0 +1,15 @@
+{
+  "firebase": {
+    "apiKey": "apiKey",
+    "authDomain": "authDomain",
+    "databaseURL": "databaseURL",
+    "projectId": "projectId",
+    "storageBucket": "",
+    "messagingSenderId": "messagingSenderId"
+  },
+  "vimeo": {
+    "clientId": "appClientId",
+    "authorizationUrl": "https://api.vimeo.com/oauth/authorize"
+  },
+  "appUrl": "http://your-app-url.com"
+}
